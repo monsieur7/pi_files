@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var iframe = document.querySelector("iframe");
+            iframe.onload = function () {
+                var iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+                var meta = iframeDocument.createElement('meta');
+                meta.httpEquiv = "Set-Cookie";
+                meta.content = "name=value; SameSite=None; Secure";
+                iframeDocument.head.appendChild(meta);
+            };
+        });
+    </script>
+</head>
+
+<body>
+    <iframe
+        src="http://10.175.32.212:3000/d-solo/ee04nm8vksmbke/test-dashboard?orgId=1&from=1728299572445&to=1728303172445&theme=dark&panelId=1"
+        width="450" height="200" frameborder="0"></iframe>
+</body>
+
+</html>

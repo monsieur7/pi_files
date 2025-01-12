@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Humidity, Temperature, and Water Level</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            background: #f0f0f0;
+            box-sizing: border-box;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            width: 100%;
+            height: 100%;
+            padding: 10px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+        }
+
+        .gauge-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+            flex-wrap: wrap;
+        }
+
+        .gauge-wrapper {
+            max-width: 150px;
+            text-align: center;
+        }
+
+        .gauge {
+            width: 100%;
+            max-width: 120px;
+            height: auto;
+        }
+
+        .icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .value {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 600px) {
+            .icon {
+                font-size: 18px;
+            }
+
+            .value {
+                font-size: 12px;
+            }
+
+            .gauge {
+                max-width: 100px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="gauge-container">
+            <div class="gauge-wrapper">
+                <div class="icon"><i class="fas fa-tint"></i></div>
+                <canvas id="humidityGauge" class="gauge"></canvas>
+                <div id="humidityValue" class="value">0%</div>
+            </div>
+            <div class="gauge-wrapper">
+                <div class="icon"><i class="fas fa-thermometer-half"></i></div>
+                <canvas id="temperatureGauge" class="gauge"></canvas>
+                <div id="temperatureValue" class="value">0°C</div>
+            </div>
+            <div class="gauge-wrapper">
+                <div class="icon"><i class="fas fa-water"></i></div>
+                <canvas id="waterLevelGauge" class="gauge"></canvas>
+                <div id="waterLevelValue" class="value">0%</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const humidityCtx = document.getElementById('humidityGauge').getContext('2d');
+        const temperatureCtx = document.getElementById('temperatureGauge').getContext('2d');
+        const waterLevelCtx = document.getElementById('waterLevelGauge').getContext('2d');
+
+        const humidityGauge = new Chart(humidityCtx, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [0, 100],
+                    backgroundColor: ['#4caf50', '#e0e0e0'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                circumference: Math.PI,
+                rotation: Math.PI,
+                cutout: '75%',
+                plugins: {
+                    tooltip: { enabled: false },
+                    legend: { display: false }
+                }
+            }
+        });
+
+        const temperatureGauge = new Chart(temperatureCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Temperature'],
+                datasets: [{
+                    label: 'Temperature',
+                    data: [0],
+                    backgroundColor: ['#ff5722'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                scales: {
+                    y: {
+                        min: 0,
+                        max: 100,
+                        ticks: { stepSize: 10 },
+                        display: false
+                    },
+                    x: { display: false }
+                },
+                plugins: {
+                    tooltip: { enabled: false },
+                    legend: { display: false }
+                }
+            }
+        });
+
+        const waterLevelGauge = new Chart(waterLevelCtx, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [0, 100],
+                    backgroundColor: ['#2196f3', '#e0e0e0'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                circumference: Math.PI,
+                rotation: Math.PI,
+                cutout: '75%',
+                plugins: {
+                    tooltip: { enabled: false },
+                    legend: { display: false }
+                }
+            }
+        });
+
+        function updateGauges(humidity, temperature, waterLevel) {
+            humidityGauge.data.datasets[0].data[0] = humidity;
+            humidityGauge.data.datasets[0].data[1] = 100 - humidity;
+            humidityGauge.update();
+
+            temperatureGauge.data.datasets[0].data[0] = temperature;
+            temperatureGauge.update();
+
+            waterLevelGauge.data.datasets[0].data[0] = waterLevel;
+            waterLevelGauge.data.datasets[0].data[1] = 100 - waterLevel;
+            waterLevelGauge.update();
+
+            document.getElementById('humidityValue').innerText = `${humidity.toFixed(1)}%`;
+            document.getElementById('temperatureValue').innerText = `${temperature.toFixed(1)}°C`;
+            document.getElementById('waterLevelValue').innerText = `${waterLevel.toFixed(1)}%`;
+        }
+
+        async function fetchData() {
+            const response = await fetch('/data');
+            const data = await response.json();
+            updateGauges(data.humidity, data.temperature, data.water_level);
+        }
+
+        setInterval(fetchData, 5000);
+        fetchData();
+    </script>
+</body>
+
+</html>

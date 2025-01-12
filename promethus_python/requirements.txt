@@ -1,0 +1,4 @@
+Flask
+prometheus-api-client
+paho-mqtt
+pyserial
