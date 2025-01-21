@@ -101,35 +101,40 @@ try:
         # read serial port (a line)
         # format :
         # soilhumidity|temperature|humidity|waterlevel
-        line = sio.readline().strip().replace("\n", "")
-        print(f"Data received: {line}")
-        # parse the data
-        data = line.split("|")
-        if len(data) != 4:
-            print("Invalid data received.")
-            continue
-        else:
-            soil_humidity = data[0]
-            temp = data[1]
-            humidity = data[2]
-            water_level = data[3]
-        # send the data to the broker
-        # encore in json format
-        json_payload = json.dumps({"temperature": temp})
-        client.publish("sensors/temperature", json_payload)
-        print(f"Message sent: {json_payload}")
-        json_payload = json.dumps({"humidity": humidity})
-        client.publish("sensors/humidity", json_payload)
-        print(f"Message sent: {json_payload}")
-        json_payload = json.dumps({"water_level": water_level})
-        client.publish("sensors/water_level", json_payload)
-        print(f"Message sent: {json_payload}")
-        # soil humidity
-        json_payload = json.dumps({"soil_moisture": soil_humidity})
-        client.publish("sensors/soil_moisture", json_payload)
+        try:
+            line = sio.readline().strip().replace("\n", "")
+        except:
+            print("Serial port error.")
+            line = ""
+        if line != "":
+            print(f"Data received: {line}")
+            # parse the data
+            data = line.split("|")
+            if len(data) != 4:
+                print("Invalid data received.")
+                continue
+            else:
+                soil_humidity = data[0]
+                temp = data[1]
+                humidity = data[2]
+                water_level = data[3]
+            # send the data to the broker
+            # encore in json format
+            json_payload = json.dumps({"temperature": temp})
+            client.publish("sensors/temperature", json_payload)
+            print(f"Message sent: {json_payload}")
+            json_payload = json.dumps({"humidity": humidity})
+            client.publish("sensors/humidity", json_payload)
+            print(f"Message sent: {json_payload}")
+            json_payload = json.dumps({"water_level": water_level})
+            client.publish("sensors/water_level", json_payload)
+            print(f"Message sent: {json_payload}")
+            # soil humidity
+            json_payload = json.dumps({"soil_moisture": soil_humidity})
+            client.publish("sensors/soil_moisture", json_payload)
 
-        print(f"Message sent: {json_payload}")
-        time.sleep(1)
+            print(f"Message sent: {json_payload}")
+            time.sleep(1)
 
 except KeyboardInterrupt:
     client.loop_stop()
