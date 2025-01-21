@@ -124,6 +124,11 @@ try:
         json_payload = json.dumps({"water_level": water_level})
         client.publish("sensors/water_level", json_payload)
         print(f"Message sent: {json_payload}")
+        # soil humidity
+        json_payload = json.dumps({"soil_moisture": soil_humidity})
+        client.publish("sensors/soil_moisture", json_payload)
+
+        print(f"Message sent: {json_payload}")
         time.sleep(1)
 
 except KeyboardInterrupt:

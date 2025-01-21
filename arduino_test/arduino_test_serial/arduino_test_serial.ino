@@ -7,5 +7,5 @@ void loop() {
   // put your main code here, to run repeatedly:
   //humiditeSol|temperatureAir|humiditeAir|niveauEau
 
-Serial.println("100|80|100|20");
+Serial.println("50|20|70|30");
 }
