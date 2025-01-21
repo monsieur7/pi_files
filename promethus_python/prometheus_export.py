@@ -96,6 +96,7 @@ def data():
 
 @app.route("/pump/<duration>", methods=["POST"])
 def pump(duration):
+    print(f"Received post {duration}")
     if request.method == "POST":
         # Send the command to the MQTT broker
         if int(duration) < 0:
@@ -105,6 +106,7 @@ def pump(duration):
         return jsonify(success=True)
     else:
         # return error : wrong method
+        print(f"Received post {duration}")
         return jsonify(success=False), 405
 
 
