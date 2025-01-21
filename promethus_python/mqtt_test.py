@@ -45,7 +45,7 @@ def on_message(client, userdata, msg):
             try:
                 time_value = int(payload[1])
                 print(f"Pump is {command} for {time_value} seconds")
-                sio.write(f"PUMP {command} {time_value}\n".encode())
+                sio.write(f"PUMP {command} {time_value}\n")
             except ValueError:
                 print("Invalid time value received.")
         else:
