@@ -90,7 +90,7 @@ while client.is_connected() == False:
     time.sleep(5)
     if client.is_connected() == True:
         break
-client.subscribe("pump")
+client.subscribe("pump", qos=2)
 # Keep the script running
 try:
     while True:  #
